@@ -1,0 +1,6 @@
+customtkinter
+openpyxl
+Pillow
+pyinstaller
+requests
+anthropic>=0.25.0

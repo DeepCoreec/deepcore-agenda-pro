@@ -1,0 +1,76 @@
+name: Build & Release — DeepCore Agenda Pro
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Instalar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Compilar con PyInstaller
+        run: |
+          pyinstaller --name "DeepCore Agenda Pro" --windowed --onedir --noconfirm `
+            --add-data "modules;modules" `
+            --add-data "theme.py;." `
+            --add-data "deepcore_office.py;." `
+            --add-data "deepcore_office_panel.py;." `
+            --hidden-import PIL._tkinter_finder `
+            --hidden-import customtkinter `
+            --hidden-import openpyxl `
+            --hidden-import sqlite3 `
+            --hidden-import anthropic `
+            --hidden-import requests `
+            --hidden-import urllib.request `
+            --hidden-import secrets `
+            --hidden-import hashlib `
+            --hidden-import platform `
+            --hidden-import uuid `
+            --collect-all customtkinter `
+            --collect-all PIL `
+            --collect-all openpyxl `
+            main.py
+
+      - name: Comprimir en ZIP
+        run: Compress-Archive -Path "dist\DeepCore Agenda Pro" -DestinationPath "DeepCoreAgendaPro-Setup.zip"
+        shell: pwsh
+
+      - name: Publicar en GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: DeepCore Agenda Pro ${{ github.ref_name }}
+          body: |
+            ## DeepCore Agenda Pro ${{ github.ref_name }}
+            Sistema de gestión de citas y turnos para negocios ecuatorianos — clínicas, salones, servicios técnicos.
+
+            **Instalación:**
+            1. Descarga `DeepCoreAgendaPro-Setup.zip`
+            2. Extrae la carpeta completa en cualquier ubicación
+            3. Ejecuta `DeepCore Agenda Pro.exe`
+            4. Ingresa tu licencia de deepcore.ec
+          files: DeepCoreAgendaPro-Setup.zip
+          fail_on_unmatched_files: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
