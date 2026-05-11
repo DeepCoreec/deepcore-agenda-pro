@@ -1,10 +1,10 @@
-"""
+﻿"""
 DeepCore — Sistema de Licencias Universal v2
 """
 import base64, hashlib, hmac, json, os, platform, sys, time, urllib.request, uuid
 from datetime import date
 
-_SERVER  = base64.b64decode(b'aHR0cHM6Ly93ZWItcHJvZHVjdGlvbi0yNThjYi51cC5yYWlsd2F5LmFwcA==').decode()
+_SERVER  = base64.b64decode(b'aHR0cHM6Ly9hbGlzc29uLXZvei1zZXJ2ZXItcHJvZHVjdGlvbi51cC5yYWlsd2F5LmFwcA==').decode()
 _SECRET  = base64.b64decode(b'RENfTUFTVEVSXzIwMjZfJEsjbVA5IXhady1VTklWRVJTQUw=')
 _PROG_ID = 'AGENDA'
 _CACHE_TTL = 3 * 24 * 3600
